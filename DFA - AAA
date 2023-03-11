@@ -1,0 +1,56 @@
+aaa new-model
+!
+!
+aaa group server tacacs+ dfatacacs
+ server name DALLAS_ISE_VIP
+ server name DFAUSDAL01ISE01
+ server name DFAUSNAC01ISE01
+!
+aaa authentication login default group dfatacacs local
+aaa authentication login no_tacacs enable
+aaa authentication ppp default local group no_tacacs
+aaa authorization exec default group dfatacacs local 
+aaa authorization commands 15 default group dfatacacs local 
+aaa authorization network default group dfatacacs local 
+aaa accounting exec default start-stop group dfatacacs
+aaa accounting commands 15 default start-stop group dfatacacs
+aaa accounting network default start-stop group dfatacacs
+aaa accounting connection default start-stop group dfatacacs
+!
+!
+!
+!
+tacacs-server directed-request
+tacacs-server key 7 00001505005F08
+tacacs server DFAUSNAC01ISE01
+ address ipv4 10.245.50.11
+ key 7 08254A4D0D1D06
+ timeout 5
+tacacs server DFAUSDAL01ISE01
+ address ipv4 10.246.50.11
+ key 7 070B274F4A0D1A
+ timeout 5
+tacacs server DALLAS_ISE_VIP
+ address ipv4 10.90.16.102
+ key 7 14131408080029
+ timeout 5
+!
+line con 0
+exec-timeout 30 0
+authorization exec default
+login authentication default
+ stopbits 1
+line vty 0 4
+exec-timeout 30 0
+ authorization exec default
+ logging synchronous
+ login authentication default
+ transport preferred none
+ transport input ssh
+line vty 5 15
+exec-timeout 30 0
+ authorization exec default
+ logging synchronous
+ login authentication default
+ transport preferred none
+ transport input ssh
